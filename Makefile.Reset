@@ -1,0 +1,30 @@
+.PHONY: desktop android
+
+RAYLIB_SRC_PATH ?= external\raylib\src
+# STATIC or SHARED
+RAYLIB_LIB_TYPE			?= STATIC
+MAKE					?= mingw32-make
+PROJECT_VERSION			?= 0.1.0
+PROJECT_OUTPUT_NAME		?= simple_game
+ANDROID_PACKAGE_NAME	?= com.raylib.simple_game
+
+desktop:
+	$(MAKE) -C $(RAYLIB_SRC_PATH) clean
+	$(MAKE) -C $(RAYLIB_SRC_PATH)
+ifeq ($(RAYLIB_LIB_TYPE),SHARED)
+	@echo "Symlink required for shared library"
+	mklink $(RAYLIB_SRC_PATH)\libraylib.so $(RAYLIB_SRC_PATH)\libraylib.3.7.1.so
+endif
+	del build\$(PROJECT_VERSION)\desktop
+	$(MAKE)
+	.\build\$(PROJECT_VERSION)\desktop\$(PROJECT_OUTPUT_NAME).exe
+
+android:
+	$(MAKE) -C $(RAYLIB_SRC_PATH) clean
+	$(MAKE) -C $(RAYLIB_SRC_PATH) PLATFORM=PLATFORM_ANDROID
+	del build\$(PROJECT_VERSION)\android\bin\*
+	$(MAKE) PLATFORM=PLATFORM_ANDROID
+	adb uninstall $(ANDROID_PACKAGE_NAME)
+	adb install build\$(PROJECT_VERSION)\android\bin\$(PROJECT_OUTPUT_NAME).apk
+	adb logcat -c
+	adb logcat raylib:V *:S
