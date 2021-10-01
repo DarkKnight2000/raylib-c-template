@@ -23,6 +23,8 @@
     cd external
     git clone https://github.com/raysan5/raylib --depth 1
 
+- Look at [Directory Structure](#directory-structure) for more info about folders
+
 
 ## Usage
 

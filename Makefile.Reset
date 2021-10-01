@@ -15,7 +15,7 @@ ifeq ($(RAYLIB_LIB_TYPE),SHARED)
 	@echo "Symlink required for shared library"
 	mklink $(RAYLIB_SRC_PATH)\libraylib.so $(RAYLIB_SRC_PATH)\libraylib.3.7.1.so
 endif
-	del build\$(PROJECT_VERSION)\desktop
+	$(MAKE) clean
 	$(MAKE)
 	.\build\$(PROJECT_VERSION)\desktop\$(PROJECT_OUTPUT_NAME).exe
 

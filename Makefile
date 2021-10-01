@@ -470,7 +470,7 @@ $(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c
 clean:
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
-		del $(PROJECT_ROOT_PATH)\obj\*.o $(PROJECT_ROOT_PATH)\obj\*.d $(PROJECT_OUTPUT_PATH)\*.exe /s
+		del $(PROJECT_ROOT_PATH)\obj\*.o $(PROJECT_ROOT_PATH)\obj\*.d /s
     endif
     ifeq ($(PLATFORM_OS),LINUX)
 		find . -type f -executable -delete
