@@ -7,20 +7,25 @@
 - Obj files are created in a separate folder to keep the working tree clean
 - Incremental building. Build only compilation units that are changed
 - Separate build directories based on version and platform
-- Automatically copy all assets (in res/ folder) to build directory along with the app. Makes it easier to ship your game
 - Tested on Windows for Desktop and Android platforms. Uses Makefiles from raylib repo with some modifications, so it should work for other platforms also
 - Includes a Makefile.Reset file which recompiles raylib to required platform and starts building the project. Useful when switching and testing between different platforms
 
 
-## Setup
+## Intial Setup
 
-- Download the project and run intial setup command
+- Run the following commands to download and build the project
+
+```
+git clone https://github.com/DarkKnight2000/raylib-c-template.git
+cd raylib-c-template
+make setup
+make rebuild
+make
+```
+- Download the project with `git clone` command (Skip if you already downloaded) and `cd` into the root of the project.
 - `make setup` will download raylib and setup directories
-
-    git clone https://github.com/DarkKnight2000/raylib-c-template.git
-    cd raylib-c-template
-    make setup
-
+- `make rebuild` will compile raylib for desktop platform
+- `make` will compile the project and run the executable
 - If you are running on Windows, use `mingw32-make` instead of `make`
 
 - Look at [Directory Structure](#directory-structure) for more info about folders
@@ -29,23 +34,27 @@
 ## Usage
 
 - All these commands should be run in the project root
-- When building for first time or switching platforms, run this command to build/rebuild raylib to required platform and build the project
+- For building and testing on desktop platform run
 
 ```
 # for Desktop
-make -f Makefile.Reset desktop
+make
 
 # for Android
-make -f Makefile.Reset android
+make PLATFORM=PLATFORM_ANDROID
+```
+
+- When switching platforms, run this command to build/rebuild raylib to required platform and build the project
+
+```
+# for Desktop
+make rebuild
+
+# for Android
+make rebuild PLATFORM=PLATFORM_ANDROID
 ```
 
 - For Android, look at Makefile.Android file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The Makefile.Android is taken from `raylib` repo, look at [Raylib Wiki](https://github.com/raysan5/raylib/wiki/Working-for-Android) for details.
-
-- For subsequent builds
-
-```
-make
-```
 
 ## Directory Structure:
 
