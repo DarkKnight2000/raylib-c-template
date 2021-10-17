@@ -36,7 +36,7 @@ make -f Makefile.Reset desktop
 make -f Makefile.Reset android
 ```
 
-- For Android, look at Makefile.Android file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The Makefile.Android is taken from `raylib` repo so look at [Raylib Wiki](https://github.com/raysan5/raylib/wiki/Working-for-Android) for details.
+- For Android, look at Makefile.Android file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The Makefile.Android is taken from `raylib` repo, look at [Raylib Wiki](https://github.com/raysan5/raylib/wiki/Working-for-Android) for details.
 
 - For subsequent builds
 
@@ -48,15 +48,15 @@ make
 
 - .vscode/
   - Containes some useful settings when working with Visual Studio Code
-- build/
-  - All the build files are created here ready for shipping along with assets
+- bin/
+  - All the executable files are created here ready for shipping along with assets
 - vendor/
   - Containes raylib source code. No need to install raylib or any dependencies. Added raylib repo as a git submodule.
 - include/
   - Folder for your project header files here
 - res/
   - Folder for your assets
-  - Copied on each build to the build directory
-  - Use the path "res/{asset-name}" in the code to reference the assets
+  - Copied on each build to the bin directory
+  - Use the path `res/{asset-name}` in the code to reference the assets
 - src/
   - Folder for C source files
