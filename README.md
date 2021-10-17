@@ -54,7 +54,7 @@ make rebuild
 make rebuild PLATFORM=PLATFORM_ANDROID
 ```
 
-- For Android, look at Makefile.Android file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The Makefile.Android is taken from `raylib` repo, look at [Raylib Wiki](https://github.com/raysan5/raylib/wiki/Working-for-Android) for details.
+- For Android, look at Makefile.Android file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The `Makefile.Android` file is taken from `raylib` repo, refer [Raylib Wiki - Working for Android](https://github.com/raysan5/raylib/wiki/Working-for-Android) for more details.
 
 ## Directory Structure:
 
@@ -75,3 +75,4 @@ make rebuild PLATFORM=PLATFORM_ANDROID
   - Use the path `res/{asset-name}` in the code to reference the assets
 - src/
   - Folder for C source files
+  - When creating a new source file add the name of the file to `PROJECT_SOURCE_FILES` variable in `Makefile`
