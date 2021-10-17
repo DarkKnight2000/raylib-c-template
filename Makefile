@@ -21,7 +21,7 @@
 #
 #**************************************************************************************************
 
-.PHONY: all clean
+.PHONY: all clean setup rebuild
 
 # Define default options
 
@@ -30,12 +30,16 @@ PLATFORM           ?= PLATFORM_DESKTOP
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     PLATFORM_NICKNAME=desktop
-endif
-ifeq ($(PLATFORM),PLATFORM_WEB)
-    PLATFORM_NICKNAME=web
-endif
-ifeq ($(PLATFORM),PLATFORM_ANDROID)
-    PLATFORM_NICKNAME=android
+else
+	ifeq ($(PLATFORM),PLATFORM_WEB)
+		PLATFORM_NICKNAME=web
+	else
+		ifeq ($(PLATFORM),PLATFORM_ANDROID)
+			PLATFORM_NICKNAME=android
+		else
+			PLATFORM_NICKNAME=$(PLATFORM)
+		endif
+	endif
 endif
 
 # Define required project variables
@@ -50,7 +54,7 @@ PROJECT_SOURCE_FILES ?= $(PROJECT_ROOT_PATH)/src/simple_game.c
 
 # Define required raylib variables
 RAYLIB_VERSION      ?= 3.7.0
-RAYLIB_PATH         ?= $(PROJECT_ROOT_PATH)/external/raylib/
+RAYLIB_PATH         ?= $(PROJECT_ROOT_PATH)/vendor/raylib/
 
 
 # Locations of your newly installed library and associated headers. See ../src/Makefile
@@ -320,7 +324,7 @@ LDFLAGS = -L. -L$(RAYLIB_RELEASE_PATH) -L$(RAYLIB_PATH)/src
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
         # resource file contains windows executable icon and properties
-        LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
+        # LDFLAGS += $(RAYLIB_PATH)/src/raylib.rc.data
         # -Wl,--subsystem,windows hides the console window
         ifeq ($(BUILD_MODE), RELEASE)
             LDFLAGS += -Wl,--subsystem,windows
@@ -436,20 +440,22 @@ endif
 all:
 	$(MAKE) $(MAKEFILE_PARAMS)
 	@echo "Output generated in $(PROJECT_OUTPUT_PATH) folder"
-
-########## Uncomment the following 'if' and remove this comment, 
-########## if you want to run the app automatically after build
-# ifeq ($(PLATFORM),PLATFORM_DESKTOP)
-#     ifeq ($(PLATFORM_OS),WINDOWS)
-# 		$(PROJECT_OUTPUT_PATH)/$(PROJECT_NAME)$(EXT)
-#     endif
-#     ifeq ($(PLATFORM_OS),LINUX)
-# 		./$(PROJECT_OUTPUT_PATH)/$(PROJECT_NAME)$(EXT)
-#     endif
-#     ifeq ($(PLATFORM_OS),OSX)
-# 		./$(PROJECT_OUTPUT_PATH)/$(PROJECT_NAME)$(EXT)
-#     endif
-# endif
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+    ifeq ($(PLATFORM_OS),WINDOWS)
+		$(PROJECT_OUTPUT_PATH)/$(PROJECT_NAME)$(EXT)
+    endif
+    ifeq ($(PLATFORM_OS),LINUX)
+		./$(PROJECT_OUTPUT_PATH)/$(PROJECT_NAME)$(EXT)
+    endif
+    ifeq ($(PLATFORM_OS),OSX)
+		./$(PROJECT_OUTPUT_PATH)/$(PROJECT_NAME)$(EXT)
+    endif
+endif
+ifeq ($(PLATFORM),PLATFORM_ANDROID)
+	adb install $(PROJECT_OUTPUT_PATH)\bin\$(PROJECT_OUTPUT_NAME).apk
+	adb logcat -c
+	adb logcat raylib:V *:S
+endif
 
 # Project target defined by PROJECT_NAME
 $(PROJECT_NAME): $(OBJS)
@@ -494,3 +500,11 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 	@echo Cleaning done
 
+setup:
+	git submodule update --init --recursive
+	if not exist $(PROJECT_ROOT_PATH)\obj mkdir $(PROJECT_ROOT_PATH)\obj
+	if not exist $(PROJECT_OUTPUT_PATH) mkdir $(PROJECT_OUTPUT_PATH)
+
+rebuild:
+	$(MAKE) -C $(RAYLIB_SRC_PATH) clean
+	$(MAKE) -C $(RAYLIB_SRC_PATH) PLATFORM=$(PLATFORM)

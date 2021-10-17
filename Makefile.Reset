@@ -1,6 +1,6 @@
 .PHONY: desktop android
 
-RAYLIB_SRC_PATH ?= external\raylib\src
+RAYLIB_SRC_PATH ?= vendor\raylib\src
 # STATIC or SHARED
 RAYLIB_LIB_TYPE			?= STATIC
 MAKE					?= mingw32-make

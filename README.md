@@ -17,11 +17,9 @@
 
     git clone https://github.com/DarkKnight2000/raylib-c-template.git
     cd raylib-c-template
-    mkdir obj
-    mkdir build
-    mkdir external
-    cd external
-    git clone https://github.com/raysan5/raylib --depth 1
+    make setup
+
+- If you are running on Windows, use `mingw32-make` instead of `make`
 
 - Look at [Directory Structure](#directory-structure) for more info about folders
 
@@ -52,8 +50,8 @@ make
   - Containes some useful settings when working with Visual Studio Code
 - build/
   - All the build files are created here ready for shipping along with assets
-- external/
-  - Containes raylib. Pull latest changes and rebuild (you can use Makefile.Reset) for latest changes
+- vendor/
+  - Containes raylib source code. No need to install raylib or any dependencies. Added raylib repo as a git submodule.
 - include/
   - Folder for your project header files here
 - res/
