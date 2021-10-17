@@ -1,3 +1,4 @@
 external/*
 obj/
+bin/
 build/
