@@ -52,6 +52,8 @@ make
 - .vscode/
   - Containes some useful settings when working with Visual Studio Code
   - Use shortcut `Ctrl + Shift + B` to automatically open a terminal and run `Make`.
+  - Includes settings to hide some files in the explorer to keep it clean.
+  - Adds `include\` folder to VSCode Intellisense path
 - bin/
   - All the executable files are created here ready for shipping along with assets
 - vendor/
