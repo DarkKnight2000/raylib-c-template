@@ -14,6 +14,8 @@
 
 ## Setup
 
+- Download the project and run intial setup command
+- `make setup` will download raylib and setup directories
 
     git clone https://github.com/DarkKnight2000/raylib-c-template.git
     cd raylib-c-template
@@ -27,7 +29,8 @@
 ## Usage
 
 - All these commands should be run in the project root
-- When building for first time or switching platforms. This rebuilds raylib to required platform and builds the project
+- When building for first time or switching platforms, run this command to build/rebuild raylib to required platform and build the project
+
 ```
 # for Desktop
 make -f Makefile.Reset desktop
@@ -48,15 +51,16 @@ make
 
 - .vscode/
   - Containes some useful settings when working with Visual Studio Code
+  - Use shortcut `Ctrl + Shift + B` to automatically open a terminal and run `Make`.
 - bin/
   - All the executable files are created here ready for shipping along with assets
 - vendor/
-  - Containes raylib source code. No need to install raylib or any dependencies. Added raylib repo as a git submodule.
+  - Containes raylib source code. No need to install raylib or any dependencies. Added raylib repo as a git submodule. Run `make setup` to download latest stable version of raylib
 - include/
   - Folder for your project header files here
 - res/
   - Folder for your assets
-  - Copied on each build to the bin directory
+  - Copy folder this to bin directory to distribute your game/software
   - Use the path `res/{asset-name}` in the code to reference the assets
 - src/
   - Folder for C source files
