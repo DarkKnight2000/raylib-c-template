@@ -9,5 +9,9 @@
         "obj": true,
         "vendor": true,
         ".gitmodules":true
+    },
+    "files.associations": {
+        "*.Android": "makefile",
+        "raygui.h": "c"
     }
 }

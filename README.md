@@ -8,7 +8,7 @@
 - Incremental building. Build only compilation units that are changed
 - Separate build directories based on version and platform
 - Tested on Windows for Desktop and Android platforms. Uses Makefiles from raylib repo with some modifications, so it should work for other platforms also
-- Includes a Makefile.Reset file which recompiles raylib to required platform and starts building the project. Useful when switching and testing between different platforms
+- Includes a Makefile.Reset file which recompiles raylib to required platform and starts building the project. Useful when switching and testing between different platforms (same code is moved to the default Makefile, call the recipe `rebuild` to rebuild raylib)
 
 
 ## Intial Setup
@@ -75,4 +75,4 @@ make rebuild PLATFORM=PLATFORM_ANDROID
   - Use the path `res/{asset-name}` in the code to reference the assets
 - src/
   - Folder for C source files
-  - When creating a new source file add the name of the file to `PROJECT_SOURCE_FILES` variable in `Makefile`
+  - New source files (ending with '.c') will be automatically added to build

@@ -22,6 +22,9 @@
 #**************************************************************************************************
 
 .PHONY: all clean setup rebuild
+# Define custom functions
+rwildcard = $(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
+platformpth = $(subst /,$(PATHSEP),$1)
 
 # Define default options
 
@@ -50,7 +53,7 @@ PROJECT_OUTPUT_PATH ?= $(PROJECT_ROOT_PATH)\bin\$(PROJECT_VERSION)\$(PLATFORM_NI
 PROJECT_RESOURCES_PATH ?= $(PROJECT_ROOT_PATH)\res
 
 # Define all source files required
-PROJECT_SOURCE_FILES ?= $(PROJECT_ROOT_PATH)/src/simple_game.c
+PROJECT_SOURCE_FILES ?= $(call rwildcard,$(PROJECT_ROOT_PATH)/src/,*.c)
 
 # Define required raylib variables
 RAYLIB_VERSION      ?= 4.0.0
@@ -468,7 +471,7 @@ $(PROJECT_NAME): $(OBJS)
 # Include Deps for each Obj file
 -include $(DEPS)
 
-$(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c
+$(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c Makefile
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM) $(DEPFLAGS) $(EXTRA_PARAMS)
 
 
