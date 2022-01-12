@@ -25,18 +25,21 @@
 //----------------------------------------------------------------------------------
 static const int screenWidth = 800;
 static const int screenHeight = 450;
+Font font = { 0 };
+
+static void UpdateDrawFrame(void);          // Update and draw one frame
 
 int main(void)
 {
     // Initialization
     //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "raylib game template");
-    printf("HELLO WORLD!\n");
+    // printf("HELLO WORLD!\n");
 
     // InitAudioDevice();      // Initialize audio device
 
     // Load global data (assets that must be available in all screens, i.e. font)
-    Font font = LoadFont("res/mecha.png");
+    font = LoadFont("res/mecha.png");
 
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(UpdateDrawFrame, 60, 1);
@@ -47,10 +50,7 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        MyDrawCenteredText(font, screenWidth, screenHeight, "Hello World!", 10);
-        EndDrawing();
+        UpdateDrawFrame();
     }
 #endif
     CloseWindow(); // Close window and OpenGL context
@@ -58,4 +58,13 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
     return 0;
+}
+
+// Update and draw game frame
+static void UpdateDrawFrame(void)
+{
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    MyDrawCenteredText(font, screenWidth, screenHeight, "Hello World!", 10);
+    EndDrawing();
 }

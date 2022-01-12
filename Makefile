@@ -57,7 +57,7 @@ PROJECT_SOURCE_FILES ?= $(call rwildcard,$(PROJECT_ROOT_PATH)/src/,*.c)
 
 # Define required raylib variables
 RAYLIB_VERSION      ?= 4.0.0
-RAYLIB_PATH         ?= $(PROJECT_ROOT_PATH)/vendor/raylib/
+RAYLIB_PATH         ?= $(PROJECT_ROOT_PATH)\vendor\raylib
 
 
 # Locations of your newly installed library and associated headers. See ../src/Makefile
@@ -88,8 +88,26 @@ USE_EXTERNAL_GLFW     ?= FALSE
 # by default it uses X11 windowing system
 USE_WAYLAND_DISPLAY   ?= FALSE
 
+# PLATFORM_WEB: Default properties
+BUILD_WEB_ASYNCIFY    ?= FALSE
+BUILD_WEB_SHELL       ?= $(PROJECT_ROOT_PATH)/src/minshell.html
+BUILD_WEB_HEAP_SIZE   ?= 134217728
+BUILD_WEB_RESOURCES   ?= TRUE
+BUILD_WEB_RESOURCES_PATH  ?= $(PROJECT_RESOURCES_PATH)
+
+# PLATFORM_ANDROID: Default properties
+JAVA_HOME              ?= "C:\Program Files\Android\Android Studio\jre"
+ANDROID_HOME           ?= C:\AppData\Local\Android\Sdk
+ANDROID_NDK            ?= C:\AppData\Local\Android\Sdk\ndk\android-ndk-r21e
+
+ifeq ($(PLATFORM),PLATFORM_ANDROID)
+	export JAVA_HOME
+	export ANDROID_HOME
+	export ANDROID_NDK
+endif
+
 # Determine PLATFORM_OS in case PLATFORM_DESKTOP selected
-ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+# ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     # No uname.exe on MinGW!, but OS=Windows_NT on Windows!
     # ifeq ($(UNAME),Msys) -> Windows
     ifeq ($(OS),Windows_NT)
@@ -115,28 +133,28 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
             PLATFORM_OS=OSX
         endif
     endif
-endif
-ifeq ($(PLATFORM),PLATFORM_RPI)
-    UNAMEOS=$(shell uname)
-    ifeq ($(UNAMEOS),Linux)
-        PLATFORM_OS=LINUX
-    endif
-endif
-ifeq ($(PLATFORM),PLATFORM_DRM)
-    UNAMEOS=$(shell uname)
-    ifeq ($(UNAMEOS),Linux)
-        PLATFORM_OS=LINUX
-    endif
-endif
-ifeq ($(PLATFORM),PLATFORM_ANDROID)
-    UNAMEOS=$(shell uname)
-    ifeq ($(UNAMEOS),Linux)
-        PLATFORM_OS=LINUX
-    endif
-    ifeq ($(UNAMEOS),Darwin)
-        PLATFORM_OS=OSX
-    endif
-endif
+# endif
+# ifeq ($(PLATFORM),PLATFORM_RPI)
+#     UNAMEOS=$(shell uname)
+#     ifeq ($(UNAMEOS),Linux)
+#         PLATFORM_OS=LINUX
+#     endif
+# endif
+# ifeq ($(PLATFORM),PLATFORM_DRM)
+#     UNAMEOS=$(shell uname)
+#     ifeq ($(UNAMEOS),Linux)
+#         PLATFORM_OS=LINUX
+#     endif
+# endif
+# ifeq ($(PLATFORM),PLATFORM_ANDROID)
+#     UNAMEOS=$(shell uname)
+#     ifeq ($(UNAMEOS),Linux)
+#         PLATFORM_OS=LINUX
+#     endif
+#     ifeq ($(UNAMEOS),Darwin)
+#         PLATFORM_OS=OSX
+#     endif
+# endif
 
 # RAYLIB_PATH adjustment for different platforms.
 # If using GNU make, we can get the full path to the top of the tree. Windows? BSD?
@@ -159,7 +177,7 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    EMSDK_PATH         ?= C:/emsdk
+    EMSDK_PATH         ?= D:\Downloads\Softwares\emsdk
     EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
     CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
     PYTHON_PATH         = $(EMSDK_PATH)/python/3.7.4-pywin32_64bit
@@ -221,6 +239,11 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
         MAKE = mingw32-make
     endif
 endif
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    ifeq ($(PLATFORM_OS),WINDOWS)
+        MAKE = mingw32-make
+    endif
+endif
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
     MAKE = mingw32-make
 endif
@@ -237,13 +260,14 @@ endif
 CFLAGS += -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces
 
 ifeq ($(BUILD_MODE),DEBUG)
-    CFLAGS += -g
-    ifeq ($(PLATFORM),PLATFORM_WEB)
-        CFLAGS += -s ASSERTIONS=1 --profiling
-    endif
+    CFLAGS += -g -D_DEBUG
 else
     ifeq ($(PLATFORM),PLATFORM_WEB)
-        CFLAGS += -Os
+        ifeq ($(BUILD_WEB_ASYNCIFY),TRUE)
+            CFLAGS += -O3
+        else
+            CFLAGS += -Os
+        endif
     else
         CFLAGS += -s -O1
     endif
@@ -267,31 +291,6 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
 endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
     CFLAGS += -std=gnu99 -DEGL_NO_X11
-endif
-ifeq ($(PLATFORM),PLATFORM_WEB)
-    # -Os                        # size optimization
-    # -O2                        # optimization level 2, if used, also set --memory-init-file 0
-    # -s USE_GLFW=3              # Use glfw3 library (context/input management)
-    # -s ALLOW_MEMORY_GROWTH=1   # to allow memory resizing -> WARNING: Audio buffers could FAIL!
-    # -s TOTAL_MEMORY=16777216   # to specify heap memory size (default = 16MB) (67108864 = 64MB)
-    # -s USE_PTHREADS=1          # multithreading support
-    # -s WASM=0                  # disable Web Assembly, emitted by default
-    # -s ASYNCIFY                # lets synchronous C/C++ code interact with asynchronous JS
-    # -s FORCE_FILESYSTEM=1      # force filesystem to load/save files data
-    # -s ASSERTIONS=1            # enable runtime checks for common memory allocation errors (-O1 and above turn it off)
-    # --profiling                # include information for code profiling
-    # --memory-init-file 0       # to avoid an external memory initialization code file (.mem)
-    # --preload-file resources   # specify a resources folder for data compilation
-    CFLAGS += -s USE_GLFW=3 -s ASYNCIFY -s TOTAL_MEMORY=67108864 -s FORCE_FILESYSTEM=1 
-
-    # NOTE: Simple raylib examples are compiled to be interpreter with asyncify, that way,
-    # we can compile same code for ALL platforms with no change required, but, working on bigger
-    # projects, code needs to be refactored to avoid a blocking while() loop, moving Update and Draw
-    # logic to a self contained function: UpdateDrawFrame(), check core_basic_window_web.c for reference.
-
-    # Define a custom shell .html and output extension
-    CFLAGS += --shell-file $(RAYLIB_PATH)/src/shell.html
-    EXT = .html
 endif
 
 # Define include paths for required headers
@@ -317,7 +316,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),LINUX)
         # Reset everything.
         # Precedence: immediately local, installed version, raysan5 provided libs -I$(RAYLIB_H_INSTALL_PATH) -I$(RAYLIB_PATH)/release/include
-        INCLUDE_PATHS = -I$(RAYLIB_H_INSTALL_PATH) -I. -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/release/include -I$(RAYLIB_PATH)/src/external
+        INCLUDE_PATHS = -I$(RAYLIB_H_INSTALL_PATH) -I. -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/release/include -I$(RAYLIB_PATH)/src/vendor
     endif
 endif
 
@@ -350,6 +349,42 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_DRM)
     LDFLAGS += -lGLESv2 -lEGL -ldrm -lgbm
+endif
+
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    # -Os                        # size optimization
+    # -O2                        # optimization level 2, if used, also set --memory-init-file 0
+    # -s USE_GLFW=3              # Use glfw3 library (context/input management)
+    # -s ALLOW_MEMORY_GROWTH=1   # to allow memory resizing -> WARNING: Audio buffers could FAIL!
+    # -s TOTAL_MEMORY=16777216   # to specify heap memory size (default = 16MB) (67108864 = 64MB)
+    # -s USE_PTHREADS=1          # multithreading support
+    # -s WASM=0                  # disable Web Assembly, emitted by default
+    # -s ASYNCIFY                # lets synchronous C/C++ code interact with asynchronous JS
+    # -s FORCE_FILESYSTEM=1      # force filesystem to load/save files data
+    # -s ASSERTIONS=1            # enable runtime checks for common memory allocation errors (-O1 and above turn it off)
+    # --profiling                # include information for code profiling
+    # --memory-init-file 0       # to avoid an external memory initialization code file (.mem)
+    # --preload-file resources   # specify a resources folder for data compilation
+    LDFLAGS += -s USE_GLFW=3 -s TOTAL_MEMORY=$(BUILD_WEB_HEAP_SIZE) -s FORCE_FILESYSTEM=1
+    
+    # Build using asyncify
+    ifeq ($(BUILD_WEB_ASYNCIFY),TRUE)
+        LDFLAGS += -s ASYNCIFY
+    endif
+    
+    # Add resources building if required
+    ifeq ($(BUILD_WEB_RESOURCES),TRUE)
+        LDFLAGS += --preload-file $(BUILD_WEB_RESOURCES_PATH)
+    endif
+    
+    # Add debug mode flags if required
+    ifeq ($(BUILD_MODE),DEBUG)
+        LDFLAGS += -s ASSERTIONS=1 --profiling
+    endif
+
+    # Define a custom shell .html and output extension
+    LDFLAGS += --shell-file $(BUILD_WEB_SHELL)
+    EXT = .html
 endif
 
 # Define any libraries required on linking
@@ -411,7 +446,7 @@ ifeq ($(PLATFORM),PLATFORM_DRM)
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Libraries for web (HTML5) compiling
-    LDLIBS = $(RAYLIB_RELEASE_PATH)/libraylib.a
+    LDLIBS += $(RAYLIB_RELEASE_PATH)/libraylib.a
 endif
 
 
@@ -477,7 +512,7 @@ $(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c Makefile
 
 # Clean everything
 clean:
-ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+# ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),WINDOWS)
 		del $(PROJECT_ROOT_PATH)\obj\*.o $(PROJECT_ROOT_PATH)\obj\*.d /s
     endif
@@ -489,7 +524,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
 		find . -type f -perm +ugo+x -delete
 		rm -f *.o
     endif
-endif
+# endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
 	find . -type f -executable -delete
 	rm -fv *.o
@@ -499,7 +534,7 @@ ifeq ($(PLATFORM),PLATFORM_DRM)
 	rm -fv *.o
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
-	del *.o *.html *.js
+	del $(PROJECT_ROOT_PATH)\obj\*.o $(PROJECT_OUTPUT_PATH)\*.html
 endif
 	@echo Cleaning done
 
@@ -508,6 +543,13 @@ setup:
 	if not exist $(PROJECT_ROOT_PATH)\obj mkdir $(PROJECT_ROOT_PATH)\obj
 	if not exist $(PROJECT_OUTPUT_PATH) mkdir $(PROJECT_OUTPUT_PATH)
 
-rebuild:
+rebuild: clean
+# some problem with calling raylib clean
+# $(MAKE) -C $(RAYLIB_RELEASE_PATH) clean
+ifeq ($(PLATFORM_OS),WINDOWS)
+	del $(RAYLIB_PATH)\src\*.a $(RAYLIB_PATH)\src\*.so $(RAYLIB_PATH)\src\*.o
+else
 	$(MAKE) -C $(RAYLIB_RELEASE_PATH) clean
+endif
 	$(MAKE) -C $(RAYLIB_RELEASE_PATH) PLATFORM=$(PLATFORM)
+

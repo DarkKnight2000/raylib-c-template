@@ -7,8 +7,8 @@
 - Obj files are created in a separate folder to keep the working tree clean
 - Incremental building. Build only compilation units that are changed
 - Separate build directories based on version and platform
-- Tested on Windows for Desktop and Android platforms. Uses Makefiles from raylib repo with some modifications, so it should work for other platforms also
-- Includes a Makefile.Reset file which recompiles raylib to required platform and starts building the project. Useful when switching and testing between different platforms (same code is moved to the default Makefile, call the recipe `rebuild` to rebuild raylib)
+- Tested on Windows for Desktop, Web and Android platforms. Uses Makefiles from raylib repo with some modifications, so it should work for other platforms also
+- Includes a Makefile.Reset file which recompiles raylib to required platform. Useful when switching and testing between different platforms (same code is moved to the default Makefile, call the recipe `rebuild` with `PLATFORM=PLATFORM_{}` to rebuild raylib library)
 
 
 ## Intial Setup
@@ -22,6 +22,7 @@ make setup
 make rebuild
 make
 ```
+### Commands explanation
 - Download the project with `git clone` command (Skip if you already downloaded) and `cd` into the root of the project.
 - `make setup` will download raylib and setup directories
 - `make rebuild` will compile raylib for desktop platform
@@ -42,6 +43,9 @@ make
 
 # for Android
 make PLATFORM=PLATFORM_ANDROID
+
+# for Web
+make PLATFORM=PLATFORM_WEB
 ```
 
 - When switching platforms, run this command to build/rebuild raylib to required platform and build the project
@@ -52,9 +56,14 @@ make rebuild
 
 # for Android
 make rebuild PLATFORM=PLATFORM_ANDROID
+
+# for Web
+make rebuild PLATFORM=PLATFORM_WEB
 ```
 
-- For Android, look at Makefile.Android file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The `Makefile.Android` file is taken from `raylib` repo, refer [Raylib Wiki - Working for Android](https://github.com/raysan5/raylib/wiki/Working-for-Android) for more details.
+- For Android, look at `Makefile` file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The `Makefile.Android` file is taken from `raylib` repo, refer [Raylib Wiki - Working for Android](https://github.com/raysan5/raylib/wiki/Working-for-Android) for more details.
+
+- For Web, look at `Makefile` file and set `EMSDK_PATH` paths correctly. Refer [Working for Web (HTML5)](https://github.com/raysan5/raylib/wiki/Working-for-Web-(HTML5)) for more details.
 
 ## Directory Structure:
 
@@ -76,3 +85,4 @@ make rebuild PLATFORM=PLATFORM_ANDROID
 - src/
   - Folder for C source files
   - New source files (ending with '.c') will be automatically added to build
+  - `minshell.html` file is required for building to web. It can be removed if you don't target that platform
