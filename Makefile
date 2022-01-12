@@ -53,7 +53,7 @@ PROJECT_RESOURCES_PATH ?= $(PROJECT_ROOT_PATH)\res
 PROJECT_SOURCE_FILES ?= $(PROJECT_ROOT_PATH)/src/simple_game.c
 
 # Define required raylib variables
-RAYLIB_VERSION      ?= 3.7.0
+RAYLIB_VERSION      ?= 4.0.0
 RAYLIB_PATH         ?= $(PROJECT_ROOT_PATH)/vendor/raylib/
 
 
