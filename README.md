@@ -35,6 +35,7 @@ make
 ## Usage
 - All these commands should be run in the project root
 - For building and running the program
+- If not building to Desktop, make sure all the [Makefile Settings](#makefile-settings) are correctly set.
 
 ```
 # for Desktop
@@ -48,7 +49,7 @@ make PLATFORM=PLATFORM_WEB
 ```
 
 
-- We need to build both raylib and this project to the same platform with same settings. If raylib is built to the platform you are working on currently, no need to build it again. If not, then you can run this command to build/rebuild raylib to required platform and build the project
+- We need to build both raylib and this project to the same platform with same settings. If raylib is built to the platform you are currently working on, no need to build it again. If not, then you can run this command to build/rebuild raylib to required platform and then build the project.
 
 ```
 # for Desktop
@@ -75,7 +76,7 @@ make rebuild PLATFORM=PLATFORM_WEB
   - `EMSDK_PATH`
     - path to where you downloaded `emsdk`
   - `PYTHON_PATH`
-    - go to `python` folder inside the `emsdk` folder you downloaded and set the correct python version installed
+    - go to `python` folder inside the `emsdk` folder and set the correct python version installed
     - If not set correctly, you may get `'"python"' not found` error.
   - `NODE_PATH`
     - go to `node` folder inside the `emsdk` folder and set the correct node version installed
