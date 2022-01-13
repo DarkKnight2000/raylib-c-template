@@ -96,14 +96,18 @@ BUILD_WEB_RESOURCES   ?= TRUE
 BUILD_WEB_RESOURCES_PATH  ?= $(PROJECT_RESOURCES_PATH)
 
 # PLATFORM_ANDROID: Default properties
-JAVA_HOME              ?= "C:\Program Files\Android\Android Studio\jre"
+JAVA_HOME              ?= "D:\Program Files\Android\Android Studio\jre"
 ANDROID_HOME           ?= C:\AppData\Local\Android\Sdk
 ANDROID_NDK            ?= C:\AppData\Local\Android\Sdk\ndk\android-ndk-r21e
+ANDROID_ARCH           ?= arm
+ANDROID_API_VERSION     = 27
 
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
 	export JAVA_HOME
 	export ANDROID_HOME
 	export ANDROID_NDK
+    export ANDROID_ARCH
+    export ANDROID_API_VERSION
 endif
 
 # Determine PLATFORM_OS in case PLATFORM_DESKTOP selected
@@ -491,7 +495,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
-	adb install $(PROJECT_OUTPUT_PATH)\bin\$(PROJECT_OUTPUT_NAME).apk
+	adb install $(PROJECT_OUTPUT_PATH)\bin\$(PROJECT_NAME).apk
 	adb logcat -c
 	adb logcat raylib:V *:S
 endif
@@ -508,7 +512,6 @@ $(PROJECT_NAME): $(OBJS)
 -include $(DEPS)
 
 $(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c Makefile
-	echo $(PATH)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM) $(DEPFLAGS) $(EXTRA_PARAMS)
 
 

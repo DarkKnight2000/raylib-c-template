@@ -27,15 +27,15 @@ PROJECT_ROOT_PATH		?= .
 RAYLIB_PATH            ?= $(PROJECT_ROOT_PATH)\vendor\raylib
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
-# Starting in 2019 using ARM64 is mandatory for published apps,
+# Starting in 2019 using arm64 is mandatory for published apps,
 # Starting on August 2020, minimum required target API is Android 10 (API level 29)
-ANDROID_ARCH           ?= ARM
-ANDROID_API_VERSION     = 26
+ANDROID_ARCH           ?= arm
+ANDROID_API_VERSION    ?= 29
 
-ifeq ($(ANDROID_ARCH),ARM)
+ifeq ($(ANDROID_ARCH),arm)
     ANDROID_ARCH_NAME   = armeabi-v7a
 endif
-ifeq ($(ANDROID_ARCH),ARM64)
+ifeq ($(ANDROID_ARCH),arm64)
     ANDROID_ARCH_NAME   = arm64-v8a
 endif
 ifeq ($(ANDROID_ARCH),x86)
@@ -95,11 +95,11 @@ ifeq ($(RAYLIB_LIBTYPE),SHARED)
 endif
 
 # Compiler and archiver
-ifeq ($(ANDROID_ARCH),ARM)
+ifeq ($(ANDROID_ARCH),arm)
     CC = $(ANDROID_TOOLCHAIN)/bin/armv7a-linux-androideabi$(ANDROID_API_VERSION)-clang
     AR = $(ANDROID_TOOLCHAIN)/bin/arm-linux-androideabi-ar
 endif
-ifeq ($(ANDROID_ARCH),ARM64)
+ifeq ($(ANDROID_ARCH),arm64)
     CC = $(ANDROID_TOOLCHAIN)/bin/aarch64-linux-android$(ANDROID_API_VERSION)-clang
     AR = $(ANDROID_TOOLCHAIN)/bin/aarch64-linux-android-ar
 endif
@@ -113,10 +113,10 @@ ifeq ($(ANDROID_ARCH),x86_64)
 endif
 
 # Compiler flags for arquitecture
-ifeq ($(ANDROID_ARCH),ARM)
+ifeq ($(ANDROID_ARCH),arm)
     CFLAGS = -std=c99 -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16
 endif
-ifeq ($(ANDROID_ARCH),ARM64)
+ifeq ($(ANDROID_ARCH),arm64)
     CFLAGS = -std=c99 -target aarch64 -mfix-cortex-a53-835769
 endif
 # Compilation functions attributes options
@@ -324,4 +324,3 @@ clean:
 	rmdir $(PROJECT_BUILD_PATH) /s /q
 	@echo Cleaning done
 
-rebuild:
