@@ -177,12 +177,13 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    EMSDK_PATH         ?= D:\Downloads\Softwares\emsdk
+    EMSDK_PATH         ?= D:/Downloads/Softwares/emsdk
     EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
     CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
-    PYTHON_PATH         = $(EMSDK_PATH)/python/3.7.4-pywin32_64bit
-    NODE_PATH           = $(EMSDK_PATH)/node/12.18.1_64bit/bin
+    PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-1_64bit
+    NODE_PATH           = $(EMSDK_PATH)/node/14.15.5_64bit/bin
     export PATH         = $(EMSDK_PATH);$(EMSCRIPTEN_PATH);$(CLANG_PATH);$(NODE_PATH);$(PYTHON_PATH);C:\raylib\MinGW\bin:$$(PATH)
+	export EMSDK_PATH
 endif
 
 # Define raylib release directory for compiled library.
@@ -507,6 +508,7 @@ $(PROJECT_NAME): $(OBJS)
 -include $(DEPS)
 
 $(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c Makefile
+	echo $(PATH)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM) $(DEPFLAGS) $(EXTRA_PARAMS)
 
 
@@ -552,4 +554,3 @@ else
 	$(MAKE) -C $(RAYLIB_RELEASE_PATH) clean
 endif
 	$(MAKE) -C $(RAYLIB_RELEASE_PATH) PLATFORM=$(PLATFORM)
-
