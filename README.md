@@ -5,10 +5,10 @@
 - Includes raylib. No need to install anything. Makes it easy to update raylib without breaking other projects
 
 - Obj files are created in a separate folder to keep the working tree clean
-- Incremental building. Build only compilation units that are changed
+- Incremental building. Build only compilation units that changed ( dependency tracking with `.d` files )
 - Separate build directories based on version and platform
 - Tested on Windows for Desktop, Web and Android platforms. Uses Makefiles from raylib repo with some modifications, so it should work for other platforms also
-- Includes a Makefile.Reset file which recompiles raylib to required platform. Useful when switching and testing between different platforms (same code is moved to the default Makefile, call the recipe `rebuild` with `PLATFORM=PLATFORM_{}` to rebuild raylib library)
+- Includes a `rebuild` recipe to build raylib to the required platform. For eg. `make rebuild PLATFORM=PLATFORM_WEB` will rebuild raylib library to WEB platform
 
 
 ## Intial Setup
@@ -25,7 +25,7 @@ make
 ### Commands explanation
 - Download the project with `git clone` command (Skip if you already downloaded) and `cd` into the root of the project.
 - `make setup` will download raylib and setup directories
-- `make rebuild` will compile raylib for desktop platform
+- `make rebuild` will compile raylib for Desktop platform
 - `make` will compile the project and run the executable
 - If you are running on Windows, use `mingw32-make` instead of `make`
 
@@ -33,9 +33,8 @@ make
 
 
 ## Usage
-
 - All these commands should be run in the project root
-- For building and testing on desktop platform run
+- For building and running the program
 
 ```
 # for Desktop
@@ -48,7 +47,8 @@ make PLATFORM=PLATFORM_ANDROID
 make PLATFORM=PLATFORM_WEB
 ```
 
-- When switching platforms, run this command to build/rebuild raylib to required platform and build the project
+
+- We need to build both raylib and this project to the same platform with same settings. If raylib is built to the platform you are working on currently, no need to build it again. If not, then you can run this command to build/rebuild raylib to required platform and build the project
 
 ```
 # for Desktop
@@ -61,9 +61,25 @@ make rebuild PLATFORM=PLATFORM_ANDROID
 make rebuild PLATFORM=PLATFORM_WEB
 ```
 
-- For Android, look at `Makefile` file and set `JAVA_HOME`, `ANDROID_HOME`, `ANDROID_NDK` paths correctly. The `Makefile.Android` file is taken from `raylib` repo, refer [Raylib Wiki - Working for Android](https://github.com/raysan5/raylib/wiki/Working-for-Android) for more details.
 
-- For Web, look at `Makefile` file and set `EMSDK_PATH` paths correctly. Refer [Working for Web (HTML5)](https://github.com/raysan5/raylib/wiki/Working-for-Web-(HTML5)) for more details.
+## Makefile settings
+### Android
+- In `Makefile` file and set the following paths correctly.
+  - `JAVA_HOME`
+  - `ANDROID_HOME`
+  - `ANDROID_NDK`
+- The `Makefile.Android` file is taken from `raylib` repo, refer [Raylib Wiki - Working for Android](https://github.com/raysan5/raylib/wiki/Working-for-Android) for more details. Rebuild raylib when any of these settings is changed.
+
+### Web
+- In `Makefile` file and set the following paths correctly.
+  - `EMSDK_PATH`
+    - path to where you downloaded `emsdk`
+  - `PYTHON_PATH`
+    - go to `python` folder inside the `emsdk` folder you downloaded and set the correct python version installed
+    - If not set correctly, you may get `'"python"' not found` error.
+  - `NODE_PATH`
+    - go to `node` folder inside the `emsdk` folder and set the correct node version installed
+- Refer [Working for Web (HTML5)](https://github.com/raysan5/raylib/wiki/Working-for-Web-(HTML5)) for more details. Rebuild raylib when any of these settings is changed.
 
 ## Directory Structure:
 
@@ -74,13 +90,13 @@ make rebuild PLATFORM=PLATFORM_WEB
   - Adds `include\` folder to VSCode Intellisense path
 - bin/
   - All the executable files are created here ready for shipping along with assets
+  - For Desktop, you need to copy the `res/` folder next to the executable. Both the executable and `res/` folder should be shipped together.
 - vendor/
   - Containes raylib source code. No need to install raylib or any dependencies. Added raylib repo as a git submodule. Run `make setup` to download latest stable version of raylib
 - include/
   - Folder for your project header files here
 - res/
   - Folder for your assets
-  - Copy folder this to bin directory to distribute your game/software
   - Use the path `res/{asset-name}` in the code to reference the assets
 - src/
   - Folder for C source files

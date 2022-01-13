@@ -97,8 +97,8 @@ BUILD_WEB_RESOURCES_PATH  ?= $(PROJECT_RESOURCES_PATH)
 
 # PLATFORM_ANDROID: Default properties
 JAVA_HOME              ?= "D:\Program Files\Android\Android Studio\jre"
-ANDROID_HOME           ?= C:\AppData\Local\Android\Sdk
-ANDROID_NDK            ?= C:\AppData\Local\Android\Sdk\ndk\android-ndk-r21e
+ANDROID_HOME           ?= C:\Users/RISHI/AppData\Local\Android\Sdk
+ANDROID_NDK            ?= C:\Users/RISHI/AppData\Local\Android\Sdk\ndk\android-ndk-r21e
 ANDROID_ARCH           ?= arm
 ANDROID_API_VERSION     = 27
 
@@ -181,7 +181,7 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    EMSDK_PATH         ?= D:/Downloads/Softwares/emsdk
+    EMSDK_PATH         ?= D:/Users/RISHI/Downloads/Softwares/emsdk
     EMSCRIPTEN_PATH    ?= $(EMSDK_PATH)/upstream/emscripten
     CLANG_PATH          = $(EMSDK_PATH)/upstream/bin
     PYTHON_PATH         = $(EMSDK_PATH)/python/3.9.2-1_64bit
