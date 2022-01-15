@@ -58,8 +58,11 @@ PROJECT_SOURCE_FILES ?= $(call rwildcard,$(PROJECT_ROOT_PATH)/src/,*.c)
 # Define required raylib variables
 RAYLIB_VERSION      ?= 4.0.0
 RAYLIB_PATH         ?= $(PROJECT_ROOT_PATH)\vendor\raylib
-
-
+# downloads raylib submodule into vendor folder
+GET_RAYLIB          ?= FALSE
+ifeq ($(GET_RAYLIB), TRUE)
+    RAYLIB_PATH = $(PROJECT_ROOT_PATH)\vendor\raylib
+endif
 # Locations of your newly installed library and associated headers. See ../src/Makefile
 # On Linux, if you have installed raylib but cannot compile the examples, check that
 # the *_INSTALL_PATH values here are the same as those in src/Makefile or point to known locations.
@@ -544,7 +547,9 @@ endif
 	@echo Cleaning done
 
 setup:
+ifeq ($(GET_RAYLIB),TRUE)
 	git submodule update --init --recursive
+endif
 	if not exist $(PROJECT_ROOT_PATH)\obj mkdir $(PROJECT_ROOT_PATH)\obj
 	if not exist $(PROJECT_OUTPUT_PATH) mkdir $(PROJECT_OUTPUT_PATH)
 
