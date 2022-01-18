@@ -35,9 +35,10 @@ make
 
 ## Usage
 - All these commands should be run in the project root
-- For building and running the program
 - If building to Web or Android, make sure all the [Makefile Settings](#makefile-settings) are correctly set.
+- If you are using `C`, change `USE_CPP` to `FALSE` in `Makefile` (default is `TRUE` which compiles to C++)
 
+- For building and running the program
 ```
 # for Desktop
 make
@@ -70,6 +71,7 @@ make rebuild PLATFORM=PLATFORM_WEB
   - `JAVA_HOME`
   - `ANDROID_HOME`
   - `ANDROID_NDK`
+- Allowed values for `ANDROID_ARCH` are `arm` (most common and default), `arm-64`, `x86`, `x86_64`
 - The `Makefile.Android` file is taken from `raylib` repo, refer [Raylib Wiki - Working for Android](https://github.com/raysan5/raylib/wiki/Working-for-Android) for more details. Rebuild raylib when any of these settings is changed.
 
 ### Web

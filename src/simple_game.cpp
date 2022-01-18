@@ -14,7 +14,7 @@
 
 #include <raylib.h>
 #include "myutils.h"
-#include <stdio.h>
+#include <string>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -28,6 +28,7 @@ static const int screenHeight = 450;
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
+std::string text = "Click anywhere to play sound effect";
 
 static void UpdateDrawFrame(void);          // Update and draw one frame
 
@@ -76,12 +77,12 @@ int main(void)
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
-    // UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
+    UpdateMusicStream(music);       // NOTE: Music keeps playing between screens
     
     BeginDrawing();
     ClearBackground(RAYWHITE);
     DrawFPS(10, 10);
-    MyDrawCenteredText(font, screenWidth, screenHeight, "Click anywhere to play sound effect", 10);
+    MyDrawCenteredText(font, screenWidth, screenHeight, text.c_str(), 10);
     if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
         PlaySound(fxCoin);

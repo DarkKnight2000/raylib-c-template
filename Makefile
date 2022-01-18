@@ -52,8 +52,15 @@ PROJECT_VERSION     ?= 0.1.0
 PROJECT_OUTPUT_PATH ?= $(PROJECT_ROOT_PATH)\bin\$(PROJECT_VERSION)\$(PLATFORM_NICKNAME)
 PROJECT_RESOURCES_PATH ?= $(PROJECT_ROOT_PATH)\res
 
+# Define mode
+USE_CPP             ?= TRUE
+SRC_FILE_EXT        = .c
+ifeq ($(USE_CPP),TRUE)
+    SRC_FILE_EXT    = .cpp
+endif
+
 # Define all source files required
-PROJECT_SOURCE_FILES ?= $(call rwildcard,$(PROJECT_ROOT_PATH)/src/,*.c)
+PROJECT_SOURCE_FILES ?= $(call rwildcard,$(PROJECT_ROOT_PATH)/src/,*$(SRC_FILE_EXT))
 
 # Define required raylib variables
 RAYLIB_VERSION      ?= 4.0.0
@@ -214,15 +221,27 @@ EXAMPLE_RUNTIME_PATH   ?= $(RAYLIB_RELEASE_PATH)
 # Define default C compiler: gcc
 # NOTE: define g++ compiler if using C++
 CC = gcc
-
+ifeq ($(USE_CPP),TRUE)
+    CC = g++
+else
+    CC = gcc
+endif
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),OSX)
         # OSX default compiler
-        CC = clang
+        ifeq ($(USE_CPP),TRUE)
+            CC = clang++
+        else
+            CC = clang
+        endif
     endif
     ifeq ($(PLATFORM_OS),BSD)
         # FreeBSD, OpenBSD, NetBSD, DragonFly default compiler
-        CC = clang
+        ifeq ($(USE_CPP),TRUE)
+            CC = clang++
+        else
+            CC = clang
+        endif
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
@@ -236,7 +255,11 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # HTML5 emscripten compiler
     # WARNING: To compile to HTML5, code must be redesigned
     # to use emscripten.h and emscripten_set_main_loop()
-    CC = emcc
+    ifeq ($(USE_CPP),TRUE)
+        CC = em++
+    else
+        CC = emcc
+    endif
 endif
 
 # Define default make program
@@ -265,7 +288,13 @@ endif
 #  -std=gnu99           defines C language mode (GNU C from 1999 revision)
 #  -Wno-missing-braces  ignore invalid warning (GCC bug 53119)
 #  -D_DEFAULT_SOURCE    use with -std=c99 on Linux and PLATFORM_WEB, required for timespec
-CFLAGS += -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces
+CFLAGS += -D_DEFAULT_SOURCE -Wno-missing-braces
+
+ifeq ($(USE_CPP),TRUE)
+    CFLAGS += -std=c++17
+else
+    CFLAGS += -std=c99
+endif
 
 ifeq ($(BUILD_MODE),DEBUG)
     CFLAGS += -g -D_DEBUG
@@ -459,10 +488,10 @@ endif
 
 
 # Define all object files from source files
-OBJS = $(patsubst $(PROJECT_ROOT_PATH)/src/%.c, $(PROJECT_ROOT_PATH)/obj/%.o, $(PROJECT_SOURCE_FILES))
+OBJS = $(patsubst $(PROJECT_ROOT_PATH)/src/%$(SRC_FILE_EXT), $(PROJECT_ROOT_PATH)/obj/%.o, $(PROJECT_SOURCE_FILES))
 # For .d files
 DEPFLAGS = -MMD -MF $(@:.o=.d)
-DEPS = $(patsubst $(PROJECT_ROOT_PATH)/src/%.c, $(PROJECT_ROOT_PATH)/obj/%.d, $(PROJECT_SOURCE_FILES))
+DEPS = $(patsubst $(PROJECT_ROOT_PATH)/src/%$(SRC_FILE_EXT), $(PROJECT_ROOT_PATH)/obj/%.d, $(PROJECT_SOURCE_FILES))
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
@@ -514,7 +543,7 @@ $(PROJECT_NAME): $(OBJS)
 # Include Deps for each Obj file
 -include $(DEPS)
 
-$(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%.c Makefile
+$(PROJECT_ROOT_PATH)/obj/%.o: $(PROJECT_ROOT_PATH)/src/%$(SRC_FILE_EXT) Makefile
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM) $(DEPFLAGS) $(EXTRA_PARAMS)
 
 
@@ -535,14 +564,15 @@ clean:
 # endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
 	find . -type f -executable -delete
-	rm -fv *.o
+	# rm -fv *.o
 endif
 ifeq ($(PLATFORM),PLATFORM_DRM)
 	find . -type f -executable -delete
-	rm -fv *.o
+	# rm -fv *.o
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
-	del $(PROJECT_ROOT_PATH)\obj\*.o $(PROJECT_OUTPUT_PATH)\*.html
+	del $(PROJECT_OUTPUT_PATH)\*.data $(PROJECT_OUTPUT_PATH)\*.wasm
+	del $(PROJECT_OUTPUT_PATH)\*.js $(PROJECT_OUTPUT_PATH)\*.html
 endif
 	@echo Cleaning done
 
