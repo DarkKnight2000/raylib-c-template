@@ -25,7 +25,7 @@ make
 ### Commands explanation
 - Download the project with `git clone` command (Skip if you already downloaded) and `cd` into the root of the project.
 - `make setup` will download raylib and setup directories
-  - If you don't want to download raylib or have a local copy you can use it by setting `GET_RAYLIB=FALSE` and `RAYLIB_PATH=<path-to-raylib-root>`
+  - If you don't want to download raylib or have a local copy you can use it by setting `GET_RAYLIB=FALSE` and `RAYLIB_PATH=<path-to-raylib-root>` in the `Makefile`
 - `make rebuild` will compile raylib for Desktop platform
 - `make` will compile the project and run the executable
 - If you are running on Windows, use `mingw32-make` instead of `make`
